@@ -105,6 +105,21 @@ public static class MonkeyHelper
         }
     };
 
+    // Tracks how many times a monkey has been accessed (by name), case-insensitive
+    private static readonly Dictionary<string, int> accessCounts = new(StringComparer.OrdinalIgnoreCase);
+
+    static MonkeyHelper()
+    {
+        // Initialize access counts to zero for all seeded monkeys
+        foreach (var m in monkeys)
+        {
+            if (!accessCounts.ContainsKey(m.Name))
+            {
+                accessCounts[m.Name] = 0;
+            }
+        }
+    }
+
     /// <summary>
     /// Gets all monkeys available in the repository.
     /// </summary>
@@ -121,7 +136,7 @@ public static class MonkeyHelper
         }
 
         var index = Random.Shared.Next(monkeys.Count);
-        return monkeys[index];
+    return monkeys[index];
     }
 
     /// <summary>
@@ -137,4 +152,43 @@ public static class MonkeyHelper
 
         return monkeys.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
     }
+
+    /// <summary>
+    /// Records an access for the given monkey, incrementing its access count.
+    /// </summary>
+    /// <param name="monkey">The monkey that was accessed.</param>
+    public static void RecordAccess(Monkey? monkey)
+    {
+        if (monkey is null || string.IsNullOrWhiteSpace(monkey.Name))
+        {
+            return;
+        }
+
+        if (!accessCounts.ContainsKey(monkey.Name))
+        {
+            accessCounts[monkey.Name] = 0;
+        }
+        accessCounts[monkey.Name]++;
+    }
+
+    /// <summary>
+    /// Gets the number of times a monkey with the specified name has been accessed.
+    /// </summary>
+    /// <param name="name">The monkey's name.</param>
+    /// <returns>The access count, or 0 if none recorded.</returns>
+    public static int GetAccessCount(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return 0;
+        }
+
+        return accessCounts.TryGetValue(name, out var count) ? count : 0;
+    }
+
+    /// <summary>
+    /// Returns a snapshot of all access counts keyed by monkey name.
+    /// </summary>
+    public static IReadOnlyDictionary<string, int> GetAccessCounts()
+        => new Dictionary<string, int>(accessCounts, accessCounts.Comparer);
 }
