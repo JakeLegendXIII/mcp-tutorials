@@ -1,0 +1,15 @@
+{
+    "inputs": [],
+    "servers": {
+        "lunchroulette": {
+            "type": "stdio",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "C:\\Users\\jakel\\source\\repos\\JakeLegendXIII\\mcp-tutorials\\LunchTimeApp\\LunchTimeMCP\\LunchTimeMCP\\LunchTimeMCP.csproj"
+            ],
+            "env": {}
+        }
+    }
+}
